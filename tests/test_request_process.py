@@ -1,5 +1,6 @@
 # coding: utf-8
 """
+测试从列表页到详情页的请求过程
 测试包含:
 1. vl5x的生成(vjkl5可以自生成, 服务器不会校验vjkl5, 只需让vjkl5和vl5x相互配对即可)
 2. RunEval的解析
@@ -15,7 +16,7 @@ from wenshu_utils.docid.runeval import parse_run_eval
 from wenshu_utils.docid.decrypt import decrypt_doc_id
 
 
-class TestDecryption(unittest.TestCase):
+class TestRequestProcess(unittest.TestCase):
     def setUp(self):
         self.session = requests.Session()
         self.session.headers.update({
@@ -26,7 +27,7 @@ class TestDecryption(unittest.TestCase):
     def tearDown(self):
         self.session.close()
 
-    def test_decrypt(self):
+    def test_request_process(self):
         vjkl5 = Vjkl5()
         self.session.cookies["vjkl5"] = vjkl5
 
@@ -44,7 +45,7 @@ class TestDecryption(unittest.TestCase):
         response = self.session.post(url, data=data)
 
         json_data = json.loads(response.json())
-        print(f"列表数据: {json_data}")
+        print("列表数据:", json_data)
 
         run_eval = json_data.pop(0)["RunEval"]
         try:
@@ -52,14 +53,14 @@ class TestDecryption(unittest.TestCase):
         except ValueError as e:
             raise ValueError("返回脏数据") from e
         else:
-            print(f"RunEval解析完成: {key}\n")
+            print("RunEval解析完成:", key, "\n")
 
         key = key.encode()
         for item in json_data:
             cipher_text = item["文书ID"]
-            print(f"解密: {cipher_text}")
+            print("解密:", cipher_text)
             plain_text = decrypt_doc_id(doc_id=cipher_text, key=key)
-            print(f"成功, 文书ID: {plain_text}\n")
+            print("成功, 文书ID:", plain_text, "\n")
 
 
 if __name__ == '__main__':

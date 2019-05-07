@@ -8,13 +8,13 @@ from . import _vl5x
 class Vjkl5(str):
 
     def __new__(cls, *args, **kwargs):
-        return hashlib.sha1(f"{random.random()}".encode()).hexdigest()
+        return hashlib.sha1(str(random.random()).encode()).hexdigest()
 
 
 class Vl5x(str):
 
     def __new__(cls, vjkl5: str):
-        return str(_vl5x.get_vl5x(vjkl5))
+        return _vl5x.get_vl5x(vjkl5)
 
 
 class Number(str):

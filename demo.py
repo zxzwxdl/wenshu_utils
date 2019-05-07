@@ -36,7 +36,7 @@ def request_list():
     response = session.post(list_url, data=data)
 
     json_data = json.loads(response.json())
-    print(f"列表数据: {json_data}")
+    print("列表数据:", json_data)
 
     run_eval = json_data.pop(0)["RunEval"]
     try:
@@ -44,14 +44,14 @@ def request_list():
     except ValueError as e:
         raise ValueError("返回脏数据") from e
     else:
-        print(f"RunEval解析完成: {key}\n")
+        print("RunEval解析完成:", key, "\n")
 
     key = key.encode()
     for item in json_data:
         cipher_text = item["文书ID"]
-        print(f"解密: {cipher_text}")
+        print("解密:", cipher_text)
         plain_text = decrypt_doc_id(doc_id=cipher_text, key=key)
-        print(f"成功, 文书ID: {plain_text}\n")
+        print("成功, 文书ID:", plain_text, "\n")
 
 
 def request_detail():

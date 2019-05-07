@@ -4,11 +4,11 @@
 除了RunEval和wzws_cid的解析依赖nodejs, 其他参数均用Python实现
 
 ### 环境
-1. python3.6+(如果低于3.6会报错, 例: f-string特性. 如有需要请自行修改兼容其他版本python)
+1. python3.5+
 2. 安装requirements.txt
 3. nodejs(外部依赖)
 
-### 使用方法
+### 调用示例
 参考demo.py 或 tests/里的测试用例 
 
 ### 测试

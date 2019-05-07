@@ -6,5 +6,5 @@ _data_pattern = re.compile(r'var caseinfo=JSON.stringify\((?P<case_info>.+?)\);\
                            r'.+var jsonHtmlData = (?P<html_data>".+");', re.S)
 
 
-def parse_detail(text):
+def parse_detail(text: str) -> dict:
     return _data_pattern.search(text).groupdict()
