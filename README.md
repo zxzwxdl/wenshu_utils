@@ -1,9 +1,7 @@
 ## 裁判文书相关解析/解密工具 for Java
 
 我不是专业的java开发，只是感兴趣就用java实现了一遍，所以代码风格可能也许看起来有点怪？
-
-有简单的测试用例，在src/test下，不过我用IDEA的maven test运行测试会报错，但是手动运行却没问题  
-这个我不知道是我哪里操作不对，这个日后再研究了或者有大佬知道的话也可以指点一波～
+就算有bug，应该也不维护的了。就仅供参考吧～
 
 ### 环境
 1. java 1.8
@@ -28,5 +26,18 @@
     └── WZWSParser.java         # "请开启JavaScript并刷新该页"的解析
 ```
 
-### 其他
-就算有bug，我也不维护的了。就仅供参考吧～
+### 测试
+使用maven进行测试  
+```bash
+mvn test
+```
+
+有个小问题: 我用IDEA里集成的maven运行test会报错，但是用终端运行`mvn test`却测试通过
+```
+java.util.zip.DataFormatException: invalid code lengths set
+...
+java.lang.NullPointerException
+...
+java.util.zip.DataFormatException: too many length or distance symbols
+```  
+这个我不知道是我IDEA哪里配置不对，有大佬知道的话希望可以指点一波～
