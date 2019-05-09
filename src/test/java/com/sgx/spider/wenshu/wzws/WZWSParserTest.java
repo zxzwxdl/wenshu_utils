@@ -2,12 +2,6 @@ package com.sgx.spider.wenshu.wzws;
 
 import org.junit.Test;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 
 public class WZWSParserTest {
     @Test
