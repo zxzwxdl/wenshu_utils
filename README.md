@@ -1,31 +1,13 @@
-## 裁判文书相关解析/解密工具
-开源自己之前爬文书写的相关工具  
-截止到2019.04.30, 文书网现存的反爬参数基本都能在这找到  
-除了RunEval和wzws_cid的解析依赖nodejs, 其他参数均用Python实现
+## 裁判文书相关解析/解密工具 for Java
+
+我不是专业的java开发，只是感兴趣用java实现了一遍，所以代码风格可能也许看起来有点怪？
+
+有简单的测试用例，在src/test下，不过我用IDEA的maven test运行测试会报错，但是手动运行却没问题  
+这个我不知道是我哪里操作不对，这个日后再研究了或者有大佬知道的话也可以指点一波～
 
 ### 环境
-1. python3.5+
-2. 安装requirements.txt
-3. nodejs(外部依赖)
+1. java 1.8
 
-### 调用示例
-参考demo.py 或 tests/里的测试用例 
+### 其他
+就算有bug，我也不维护的了。就仅供参考吧～
 
-### 测试
-手动运行tests/里的测试用例
-
-或
-
-通过pytest测试
-```bash
-pip install pytest
-pytest
-```
-
-或
-
-通过docker构建测试
-```bash
-docker build -t wenshu_utils .  # 构建镜像
-docker run --rm wenshu_utils    # 运行
-```
