@@ -1651,4 +1651,4 @@ def make_key_399(string):
 
 
 def get_vl5x(vjkl5):
-    return [globals().get("make_key_{}".format(i)) for i in range(400)][int(str_to_long(vjkl5)) % 400](vjkl5)
+    return globals().get("make_key_{}".format(int(str_to_long(vjkl5)) % 400))(vjkl5)

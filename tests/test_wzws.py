@@ -49,7 +49,7 @@ class TestWZWS(unittest.TestCase):
         params = {
             "DocID": "13d4c01a-0734-4ec1-bbac-658f8bb8ec62",
         }
-        response = self.session.post(url, params=params)
+        response = self.session.get(url, params=params)
 
         if "请开启JavaScript并刷新该页".encode() in response.content:
             redirect_url = wzws_cid_decrypt(response.content)
