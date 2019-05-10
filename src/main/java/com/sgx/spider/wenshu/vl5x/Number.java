@@ -3,7 +3,7 @@ package com.sgx.spider.wenshu.vl5x;
 public class Number {
     private final static String value = "wens";
 
-    public static String getValue() {
+    public String getValue() {
         return value;
     }
 
