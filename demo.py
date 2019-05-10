@@ -33,7 +33,7 @@ def request_list():
         "number": Number(),
         "guid": Guid(),
     }
-    response = session.post(list_url, params=data)
+    response = session.post(list_url, data=data)
 
     json_data = json.loads(response.json())
     print("列表数据:", json_data)
