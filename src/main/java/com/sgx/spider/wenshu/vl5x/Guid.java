@@ -4,7 +4,7 @@ package com.sgx.spider.wenshu.vl5x;
 public class Guid {
     private final String value;
 
-    public Guid(String value) {
+    public Guid() {
         this.value = String.format(
                 "%s%s-%s-%s%s-%s%s%s",
                 createGuid(), createGuid(),

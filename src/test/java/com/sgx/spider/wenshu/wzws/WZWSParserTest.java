@@ -5,7 +5,7 @@ import org.junit.Test;
 
 public class WZWSParserTest {
     @Test
-    public void testParse() {
+    public void testParse() throws Exception {
         String text = "<html>\n" +
                 "<head>\n" +
                 "</head>\n" +
@@ -22,12 +22,12 @@ public class WZWSParserTest {
                 "</body>\n" +
                 "</html>";
 
-        String url = null;
         try {
-            url = WZWSParser.parse(text);
+            String url = WZWSParser.parse(text);
+            assert url.contains("http://wenshu.court.gov.cn/");
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
-        System.out.println(url);
     }
 }
