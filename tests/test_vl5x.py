@@ -6,8 +6,8 @@
 import os
 import unittest
 
-from execjs.runtime_names import Node
 import execjs
+from execjs.runtime_names import Node
 
 from wenshu_utils.vl5x.args import Vl5x
 

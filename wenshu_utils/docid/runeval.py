@@ -1,8 +1,8 @@
 # coding: utf-8
 import re
 
-from execjs.runtime_names import Node
 import execjs
+from execjs.runtime_names import Node
 
 from ._unzip import unzip
 

@@ -1,14 +1,14 @@
 # coding: utf-8
-from pprint import pprint
 import json
+from pprint import pprint
 
 import requests
 
-from wenshu_utils.vl5x.args import Vjkl5, Vl5x, Number, Guid
-from wenshu_utils.wzws.decrypt import wzws_cid_decrypt
-from wenshu_utils.docid.runeval import parse_run_eval
 from wenshu_utils.docid.decrypt import decrypt_doc_id
+from wenshu_utils.docid.runeval import parse_run_eval
 from wenshu_utils.document.parse import parse_detail
+from wenshu_utils.vl5x.args import Vjkl5, Vl5x, Number, Guid
+from wenshu_utils.wzws.decrypt import wzws_decrypt
 
 
 def request_list():
@@ -33,7 +33,7 @@ def request_list():
         "number": Number(),
         "guid": Guid(),
     }
-    response = session.post(list_url, data=data)
+    response = session.post(list_url, params=data)
 
     json_data = json.loads(response.json())
     print("列表数据:", json_data)
@@ -66,9 +66,14 @@ def request_detail():
         "DocID": "13d4c01a-0734-4ec1-bbac-658f8bb8ec62",
     }
     response = session.get(url, params=params)
+    text = response.content.decode()
 
-    if "请开启JavaScript并刷新该页".encode() in response.content:
-        redirect_url = wzws_cid_decrypt(response.content)
+    if "请开启JavaScript并刷新该页" in text:
+        # 如果有当前请求的url，尽量把url传进去，会更快一些
+        redirect_url = wzws_decrypt(text, url=response.url)
+        # 没有url就算了
+        # redirect_url = wzws_decrypt(text)
+
         response = session.get(redirect_url)
 
     group_dict = parse_detail(response.text)

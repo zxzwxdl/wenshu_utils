@@ -8,12 +8,14 @@ import unittest
 
 import requests
 
-from wenshu_utils.wzws.decrypt import wzws_cid_decrypt
 from wenshu_utils.vl5x.args import Vl5x, Number, Guid
+from wenshu_utils.wzws.decrypt import wzws_decrypt
 
 
 class TestWZWS(unittest.TestCase):
     def setUp(self):
+        self.error_msg = "请开启JavaScript并刷新该页"
+
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36",
@@ -24,9 +26,14 @@ class TestWZWS(unittest.TestCase):
 
     def test_list(self):
         response = self.session.get("http://wenshu.court.gov.cn/list/list/")
-        if "请开启JavaScript并刷新该页".encode() in response.content:
-            redirect_url = wzws_cid_decrypt(response.content)
-            _ = self.session.get(redirect_url)
+        text = response.content.decode()
+
+        if self.error_msg in text:
+            redirect_url1 = wzws_decrypt(text, url=response.url)
+            redirect_url2 = wzws_decrypt(text)
+            self.assertEqual(redirect_url1, redirect_url2)
+
+            _ = self.session.get(redirect_url1)
 
         url = "http://wenshu.court.gov.cn/List/ListContent"
         data = {
@@ -41,7 +48,7 @@ class TestWZWS(unittest.TestCase):
         }
         response = self.session.post(url, data=data)
 
-        self.assertNotIn("请开启JavaScript并刷新该页", response.content.decode())
+        self.assertNotIn(self.error_msg, response.content.decode())
         print(response.text)
 
     def test_detail(self):
@@ -50,12 +57,16 @@ class TestWZWS(unittest.TestCase):
             "DocID": "13d4c01a-0734-4ec1-bbac-658f8bb8ec62",
         }
         response = self.session.get(url, params=params)
+        text = response.content.decode()
 
-        if "请开启JavaScript并刷新该页".encode() in response.content:
-            redirect_url = wzws_cid_decrypt(response.content)
-            response = self.session.get(redirect_url)
+        if self.error_msg in text:
+            redirect_url1 = wzws_decrypt(text, url=response.url)
+            redirect_url2 = wzws_decrypt(text)
+            self.assertEqual(redirect_url1, redirect_url2)
 
-        self.assertNotIn("请开启JavaScript并刷新该页", response.content.decode())
+            response = self.session.get(redirect_url1)
+
+        self.assertNotIn(self.error_msg, response.content.decode())
         print(response.text)
 
 

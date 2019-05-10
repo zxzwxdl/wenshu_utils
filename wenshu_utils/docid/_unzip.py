@@ -1,7 +1,7 @@
 # coding: utf-8
-from typing import Union
 import base64
 import zlib
+from typing import Union
 
 
 def unzip(base64data: Union[str, bytes]) -> bytes:

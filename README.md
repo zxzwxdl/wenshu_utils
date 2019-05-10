@@ -1,7 +1,7 @@
 ## 裁判文书相关解析/解密工具 for Python
 开源自己之前爬文书写的相关工具  
 截止到2019.04.30, 文书网现存的反爬参数基本都能在这找到  
-除了RunEval和wzws_cid的解析依赖nodejs, 其他参数均用Python实现
+除了RunEval的解析依赖nodejs, 其他参数均用Python实现
 
 Java示例请切换到java分支~
 
