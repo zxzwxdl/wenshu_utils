@@ -6,9 +6,11 @@
 ### 环境
 1. java 1.8
 
-### package和用法
-用法参考测试用例
+### Demo
+看test/下的com.sgx.spider.wenshu.Demo类  
+或参考测试用例
 
+### package
 ```bash
 .
 ├── docid                       # 文书ID相关的
