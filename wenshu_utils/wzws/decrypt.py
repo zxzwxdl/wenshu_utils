@@ -7,8 +7,6 @@ import execjs
 from execjs.runtime_names import Node
 from lxml.etree import HTML
 
-nodejs = execjs.get(Node)
-
 
 def wzws_decrypt(text: str, url: str = None) -> str:
     """
@@ -33,7 +31,7 @@ def wzws_decrypt(text: str, url: str = None) -> str:
         html = HTML(text)
         js = html.xpath("//script/text()")[0]
 
-        ctx = nodejs.compile(custom_js + js)
+        ctx = execjs.get(Node).compile(custom_js + js)
         location = ctx.call("get_location")
 
         redirect_url = parse.urljoin(base_url, location)
