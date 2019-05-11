@@ -13,6 +13,9 @@ def parse_run_eval(run_eval: str) -> str:
 
     raw_js = unzip(run_eval).decode()
 
+    if "系统繁忙".encode("unicode_escape").decode() in raw_js:
+        raise ValueError("invalid RunEval: 系统繁忙")
+
     try:
         parse_result = _parse_by_python(raw_js)
     except Exception as e:
