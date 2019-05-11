@@ -16,6 +16,11 @@ public class RunEvalParser {
         }
 
         String js = ZlibUtil.unzip(runEval);
+
+        if (js.contains(convertToUnicode("系统繁忙"))) {
+            throw new IllegalArgumentException("invalid RunEval: 系统繁忙");
+        }
+
         js = js.replaceAll("_\\[_]\\[_]\\(", "return ");
         js = js.substring(0, js.length() - 4);
         js = "function getKey () { " + js + " }";
@@ -41,5 +46,15 @@ public class RunEvalParser {
         }
 
         throw new IllegalArgumentException("invalid RunEval: parse error");
+    }
+
+    private static String convertToUnicode(String s) {
+        char[] chars = s.toCharArray();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (char aChar : chars) {
+            stringBuilder.append("\\u").append(Integer.toString(aChar, 16));
+        }
+        return stringBuilder.toString();
     }
 }

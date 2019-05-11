@@ -14,7 +14,7 @@ public class RunEvalParserTest {
             String key = RunEvalParser.parse(runEval);
             assert Objects.equals(key, "81983f68dc734c15a690de02e28f9742");
         } catch (IllegalArgumentException e) {
-            System.out.println("无效RunEval，返回了脏数据");
+            System.out.println("无效RunEval，返回了脏数据: " + e);
         } catch (ScriptException e) {
             e.printStackTrace();
             throw e;
