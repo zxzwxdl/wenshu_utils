@@ -69,7 +69,7 @@ public class Demo {
 
         BasicClientCookie cookie = new BasicClientCookie("vjkl5", vjkl5.getValue());
         cookie.setDomain(DOMAIN);
-        Demo.cookieStore.addCookie(cookie);
+        cookieStore.addCookie(cookie);
 
         String text;
         try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
