@@ -10,15 +10,15 @@
 看test/下的com.sgx.spider.wenshu.Demo类  
 或参考测试用例
 
-### package
+### packages
 ```bash
 .
-├── docid                       # 文书ID相关的
-│   ├── DocIdDecryptor.java     # 解密文书ID的
-│   ├── RunEvalParser.java      # 解析RunEval的
-│   └── ZlibUtil.java           # 解密设计的工具类
+├── docid                       # 文书ID相关
+│   ├── DocIdDecryptor.java     # 解密文书ID
+│   ├── RunEvalParser.java      # 解析RunEval
+│   └── ZlibUtil.java           # 解密涉及的工具类
 │
-├── vl5x                        # vl5x相关的
+├── vl5x                        # vl5x相关
 │   ├── Guid.java               # guid
 │   ├── Number.java             # number
 │   ├── Vjkl5.java              # cookie里的vjkl5
