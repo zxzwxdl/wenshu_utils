@@ -4,8 +4,9 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,14 +33,16 @@ public class WZWSParser {
         return "http://wenshu.court.gov.cn" + path;
     }
 
-    public static String parse(String text, String url) throws URISyntaxException {
-        URI uri = new URI(url);
-        return parse(text, uri);
+    public static String parse(String text, String url) throws MalformedURLException {
+        return parse(text, new URL(url));
     }
 
-    public static String parse(String text, URI uri) {
-        String requestPath = uri.getQuery().isEmpty() ? uri.getPath() : (uri.getPath() + "?" + uri.getQuery());
-        String encodedPath = Base64.getEncoder().encodeToString(requestPath.getBytes());
+    public static String parse(String text, URI uri) throws MalformedURLException {
+        return parse(text, uri.toURL());
+    }
+
+    public static String parse(String text, URL url) {
+        String encodedPath = Base64.getEncoder().encodeToString(url.getFile().getBytes());
 
         Matcher m = Pattern.compile("wzwsquestion=\"(?<question>.+?)\".+wzwsfactor=\"(?<factor>\\d+)\"").matcher(text);
         if (!m.find()) {
