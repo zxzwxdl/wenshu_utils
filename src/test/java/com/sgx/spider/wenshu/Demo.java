@@ -57,7 +57,9 @@ public class Demo {
         Vjkl5 vjkl5 = new Vjkl5();
 
         List<NameValuePair> data = new ArrayList<>();
-        data.add(new BasicNameValuePair("Param", "关键词:合同"));
+        // TODO 太多人测试此检索条件的数据，如果报错或返回脏数据请更换别的检索条件进行测试
+        data.add(new BasicNameValuePair("Param", "案件类型:刑事案件"));
+
         data.add(new BasicNameValuePair("Index", "1"));
         data.add(new BasicNameValuePair("Page", "10"));
         data.add(new BasicNameValuePair("Order", "法院层级"));
@@ -102,7 +104,8 @@ public class Demo {
         String url = "http://wenshu.court.gov.cn/CreateContentJS/CreateContentJS.aspx";
 
         URIBuilder uriBuilder = new URIBuilder(url);
-        uriBuilder.addParameter("DocID", "13d4c01a-0734-4ec1-bbac-658f8bb8ec62");
+        // TODO 太多人测试此DocID，如果报错请更换DocID进行测试
+        uriBuilder.addParameter("DocID", "8f0230e9-f0e4-418f-a8e0-4c24677c7a79");
 
         URI builtUrl = uriBuilder.build();
         HttpGet httpGet = new HttpGet(builtUrl);
