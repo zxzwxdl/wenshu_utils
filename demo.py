@@ -24,7 +24,7 @@ def request_list():
 
     list_url = "http://wenshu.court.gov.cn/List/ListContent"
     data = {
-        "Param": "关键词:合同",
+        "Param": "案件类型:刑事案件",  # TODO 太多人测试此检索条件的数据，如果报错或返回脏数据请更换别的检索条件进行测试
         "Index": 1,
         "Page": 10,
         "Order": "法院层级",
@@ -63,7 +63,7 @@ def request_detail():
 
     url = "http://wenshu.court.gov.cn/CreateContentJS/CreateContentJS.aspx"
     params = {
-        "DocID": "13d4c01a-0734-4ec1-bbac-658f8bb8ec62",
+        "DocID": "029bb843-b458-4d1c-8928-fe80da403cfe",  # TODO 太多人测试此DocID，如果报错请更换DocID进行测试
     }
     response = session.get(url, params=params)
     text = response.content.decode()
