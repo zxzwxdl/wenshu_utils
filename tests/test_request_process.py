@@ -40,7 +40,7 @@ class TestRequestProcess(unittest.TestCase):
 
         url = "http://wenshu.court.gov.cn/List/ListContent"
         data = {
-            "Param": "关键词:合同",
+            "Param": "案件类型:执行案件",
             "Index": 1,
             "Page": 10,
             "Order": "法院层级",

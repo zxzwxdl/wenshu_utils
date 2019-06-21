@@ -27,7 +27,7 @@ class TestDetailParse(unittest.TestCase):
     def test_detail_parse(self):
         url = "http://wenshu.court.gov.cn/CreateContentJS/CreateContentJS.aspx"
         params = {
-            "DocID": "13d4c01a-0734-4ec1-bbac-658f8bb8ec62",
+            "DocID": "a8b745f3-43ac-402c-99bf-68b9a9cae635",
         }
         response = self.session.get(url, params=params)
         text = response.content.decode()
