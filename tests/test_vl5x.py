@@ -1,8 +1,4 @@
-# coding: utf-8
-"""
-测试包含:
-1. 100%测试vl5x的python生成算法
-"""
+"""vl5x测试案例"""
 import unittest
 
 from wenshu_utils.vl5x.args import Vl5x

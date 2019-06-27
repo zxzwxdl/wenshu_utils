@@ -11,7 +11,7 @@ Java示例请切换到java分支~
 2. 安装requirements.txt
 3. nodejs(外部依赖)
 
-默认是用python实现的方法去解析的，如果python出错了，就会调用nodejs去解析，所以还是要装nodejs
+默认使用python实现的方法去解析，如果出错，则调用nodejs去解析，所以需要装nodejs
 
 ### 调用示例
 参考demo.py 或 tests/里的测试用例 

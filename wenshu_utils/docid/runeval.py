@@ -1,4 +1,3 @@
-# coding: utf-8
 import re
 
 import execjs
@@ -7,20 +6,19 @@ from execjs.runtime_names import Node
 from ._unzip import unzip
 
 
-def parse_run_eval(run_eval: str) -> str:
-    if run_eval.startswith("w63"):
+def decrypt_runeval(runeval: str) -> str:
+    if runeval.startswith("w63"):
         raise ValueError("invalid RunEval: w63")
 
-    raw_js = unzip(run_eval).decode()
+    raw_js = unzip(runeval).decode()
 
     if "系统繁忙".encode("unicode_escape").decode() in raw_js:
         raise ValueError("invalid RunEval: 系统繁忙")
 
     try:
-        parse_result = _parse_by_python(raw_js)
-    except Exception as e:
-        print("python解析RunEval错误: {}，改用nodejs解析\n错误RunEval: {}".format(e, run_eval))
-        parse_result = _parse_by_nodejs(raw_js)
+        parse_result = _decrypt_by_python(raw_js)
+    except Exception:
+        parse_result = _decrypt_by_nodejs(raw_js)
 
     if "while" in parse_result:
         raise ValueError("invalid RunEval: while(1)")
@@ -29,7 +27,7 @@ def parse_run_eval(run_eval: str) -> str:
     return key
 
 
-def _parse_by_python(js: str) -> str:
+def _decrypt_by_python(js: str) -> str:
     replace_map = {
         '!+[]': '1',
         '!![]': '"true"',
@@ -60,7 +58,7 @@ def _parse_by_python(js: str) -> str:
     return result
 
 
-def _parse_by_nodejs(js: str) -> str:
+def _decrypt_by_nodejs(js: str) -> str:
     js_code = js.replace("_[_][_](", "return ")[:-4]
 
     ctx = execjs.get(Node).compile(js_code)

@@ -1,51 +1,62 @@
+"""列表页测试案例"""
 import json
-from pprint import pprint
+import unittest
 
 import requests
 
 from wenshu_utils.docid.decrypt import decrypt_doc_id
 from wenshu_utils.docid.runeval import decrypt_runeval
-from wenshu_utils.document.parse import parse_detail
 from wenshu_utils.vl5x.args import Vjkl5, Vl5x, Number, Guid
 from wenshu_utils.wzws.decrypt import decrypt_wzws
 
 
-class Demo:
-    def __init__(self):
+class TestListPage(unittest.TestCase):
+    def setUp(self):
+        self.error_msg = "请开启JavaScript并刷新该页"
+
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36",
         })
 
-    def list_page(self):
-        html_url = "http://wenshu.court.gov.cn/list/list"
-        response = self.session.get(html_url)
+    def tearDown(self):
+        self.session.close()
+
+    def init_cookies(self):
+        url = "http://wenshu.court.gov.cn/list/list"
+        response = self.session.get(url)
         text = response.content.decode()
 
         retry = 3
         for _ in range(retry):
-            if "请开启JavaScript并刷新该页" in text:
+            if self.error_msg in text:
                 redirect_url = decrypt_wzws(text)
                 response = self.session.get(redirect_url)
                 text = response.content.decode()
             else:
                 break
         else:
-            raise Exception("连续{}次获取wzws_cid失败".format(retry))
+            self.fail("连续{}次获取wzws_cid失败".format(retry))
 
-        #
-        ajax_url = "http://wenshu.court.gov.cn/List/ListContent"
+    def test_list_page(self):
+        self.init_cookies()
+
+        vjkl5 = Vjkl5()
+        self.session.cookies["vjkl5"] = vjkl5
+
+        url = "http://wenshu.court.gov.cn/List/ListContent"
         data = {
-            "Param": "案件类型:刑事案件",
+            "Param": "案件类型:执行案件",
             "Index": 1,
             "Page": 10,
             "Order": "法院层级",
             "Direction": "asc",
-            "vl5x": Vl5x(self.session.cookies.setdefault("vjkl5", Vjkl5())),
+            "vl5x": Vl5x(vjkl5),
             "number": Number(),
             "guid": Guid(),
         }
-        response = self.session.post(ajax_url, data=data)
+        response = self.session.post(url, data=data)
+        self.assertNotIn(self.error_msg, response.content.decode())
 
         json_data = json.loads(response.json())
         print("列表数据:", json_data)
@@ -65,31 +76,6 @@ class Demo:
             plain_text = decrypt_doc_id(doc_id=cipher_text, key=key)
             print("成功, 文书ID:", plain_text, "\n")
 
-    def detail_page(self):
-        """文书详情页"""
-        url = "http://wenshu.court.gov.cn/CreateContentJS/CreateContentJS.aspx"
-        params = {
-            "DocID": "029bb843-b458-4d1c-8928-fe80da403cfe",
-        }
-        response = self.session.get(url, params=params)
-        text = response.content.decode()
-
-        retry = 3
-        for _ in range(retry):
-            if "请开启JavaScript并刷新该页" in text:
-                redirect_url = decrypt_wzws(text)
-                response = self.session.get(redirect_url)
-                text = response.content.decode()
-            else:
-                break
-        else:
-            raise Exception("连续{}次获取wzws_cid失败".format(retry))
-
-        group_dict = parse_detail(response.text)
-        pprint(group_dict)
-
 
 if __name__ == '__main__':
-    demo = Demo()
-    demo.list_page()
-    demo.detail_page()
+    unittest.main()

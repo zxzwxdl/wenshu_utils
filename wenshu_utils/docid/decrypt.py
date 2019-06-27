@@ -1,4 +1,3 @@
-# coding: utf-8
 from Cryptodome.Cipher import AES
 from Cryptodome.Util.Padding import unpad
 
