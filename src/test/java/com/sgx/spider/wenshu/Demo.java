@@ -33,16 +33,13 @@ import java.util.List;
 public class Demo {
     private static final String DOMAIN = "wenshu.court.gov.cn";
 
-    private static RequestConfig requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
     private static BasicCookieStore cookieStore = new BasicCookieStore();
     private static CloseableHttpClient httpClient = HttpClients.custom()
-            .setDefaultRequestConfig(requestConfig)
+            .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
             .setDefaultCookieStore(cookieStore)
             // 设置重定向策略，允许所有method的自动重定向，配合列表页post返回307的重定向
             .setRedirectStrategy(new LaxRedirectStrategy())
             .build();
-
-    private static final String errorMsg = "请开启JavaScript并刷新该页";
 
     @Test
     public void listPage() throws Exception {
@@ -68,28 +65,18 @@ public class Demo {
 
         HttpPost httpPost = new HttpPost(url);
         httpPost.setEntity(formEntity);
-        try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+        try (CloseableHttpResponse response = httpClient.execute(httpPost)) {// 请求1
             text = EntityUtils.toString(response.getEntity(), "UTF-8");
         }
 
-        if (text.contains(errorMsg)) {
-            int retry = 3;
-            boolean success = false;
-            for (int i = 0; i < retry; i++) {
-                String redirectUrl = WZWSParser.parse(text);
+        if (text.contains("请开启JavaScript并刷新该页")) {
+            // 如果使用代理，确保请求1和请求2的ip为同一个，否则将继续返回"请开启JavaScript并刷新该页"
+            String redirectUrl = WZWSParser.parse(text);
 
-                httpPost = new HttpPost(redirectUrl);
-                httpPost.setEntity(formEntity);
-                try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-                    text = EntityUtils.toString(response.getEntity(), "UTF-8");
-                }
-                if (!text.contains(errorMsg)) {
-                    success = true;
-                    break;
-                }
-            }
-            if (!success) {
-                throw new Exception(String.format("连续%d获取数据失败", retry));
+            httpPost = new HttpPost(redirectUrl);
+            httpPost.setEntity(formEntity);
+            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {// 请求2
+                text = EntityUtils.toString(response.getEntity(), "UTF-8");
             }
         }
 
@@ -123,25 +110,16 @@ public class Demo {
                 .addParameter("DocID", "8f0230e9-f0e4-418f-a8e0-4c24677c7a79")
                 .build();
         HttpGet httpGet = new HttpGet(uri);
-        try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
+        try (CloseableHttpResponse response = httpClient.execute(httpGet)) {// 请求1
             text = EntityUtils.toString(response.getEntity(), "UTF-8");
         }
 
-        if (text.contains(errorMsg)) {
-            int retry = 3;
-            boolean success = false;
-            for (int i = 0; i < retry; i++) {
-                String redirectUrl = WZWSParser.parse(text);
-                try (CloseableHttpResponse response = httpClient.execute(new HttpGet(redirectUrl))) {
-                    text = EntityUtils.toString(response.getEntity(), "UTF-8");
-                }
-                if (!text.contains(errorMsg)) {
-                    success = true;
-                    break;
-                }
-            }
-            if (!success) {
-                throw new Exception(String.format("连续%d获取数据失败", retry));
+        if (text.contains("请开启JavaScript并刷新该页")) {
+            // 如果使用代理，确保请求1和请求2的ip为同一个，否则将继续返回"请开启JavaScript并刷新该页"
+            String redirectUrl = WZWSParser.parse(text);
+
+            try (CloseableHttpResponse response = httpClient.execute(new HttpGet(redirectUrl))) {// 请求2
+                text = EntityUtils.toString(response.getEntity(), "UTF-8");
             }
         }
 
