@@ -17,8 +17,6 @@ class Demo:
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36",
         })
 
-        self.error_msg = "请开启JavaScript并刷新该页"
-
     def list_page(self):
         """文书列表页"""
         url = "http://wenshu.court.gov.cn/List/ListContent"
@@ -32,19 +30,13 @@ class Demo:
             "number": Number(),
             "guid": Guid(),
         }
-        response = self.session.post(url, data=data)
+        response = self.session.post(url, data=data)  # 请求1
         text = response.content.decode()
 
-        if self.error_msg in text:
-            retry = 3
-            for _ in range(retry):
-                redirect_url = decrypt_wzws(text)
-                response = self.session.post(redirect_url, data=data)
-                text = response.content.decode()
-                if self.error_msg not in text:
-                    break
-            else:
-                raise Exception("连续{}次获取数据失败".format(retry))
+        if "请开启JavaScript并刷新该页" in text:
+            # 如果使用代理，确保请求1和请求2的ip为同一个，否则将继续返回"请开启JavaScript并刷新该页"
+            redirect_url = decrypt_wzws(text)
+            response = self.session.post(redirect_url, data=data)  # 请求2
 
         json_data = json.loads(response.json())
         print("列表数据:", json_data)
@@ -70,19 +62,13 @@ class Demo:
         params = {
             "DocID": "029bb843-b458-4d1c-8928-fe80da403cfe",
         }
-        response = self.session.get(url, params=params)
+        response = self.session.get(url, params=params)  # 请求1
         text = response.content.decode()
 
-        if self.error_msg in text:
-            retry = 3
-            for _ in range(retry):
-                redirect_url = decrypt_wzws(text)
-                response = self.session.get(redirect_url)
-                text = response.content.decode()
-                if self.error_msg not in text:
-                    break
-            else:
-                raise Exception("连续{}次获取数据失败".format(retry))
+        if "请开启JavaScript并刷新该页" in text:
+            # 如果使用代理，确保请求1和请求2的ip为同一个，否则将继续返回"请开启JavaScript并刷新该页"
+            redirect_url = decrypt_wzws(text)
+            response = self.session.get(redirect_url)  # 请求2
 
         group_dict = parse_detail(response.text)
         pprint(group_dict)
