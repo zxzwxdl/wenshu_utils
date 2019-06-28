@@ -1,6 +1,4 @@
 lxml
 pycryptodomex
 PyExecJS
-
-# 用于测试
 requests
