@@ -413,7 +413,7 @@ local_test_data = [
 online_test_js = '(function(){var arr=%s;var rawGetCookie=getCookie;for(var i=0;i<arr.length;i++){var result=arr[i];var vjkl5=result["vjkl5"];var py_vl5x=result["vl5x"];getCookie=function(name){return name==="vjkl5"?vjkl5:rawGetCookie(name)};var js_vl5x=getKey();if(py_vl5x!==js_vl5x){getCookie=rawGetCookie;console.error("测试失败");return false}}getCookie=rawGetCookie;console.info("测试通过");return true})();'
 
 
-class TestVl5x(unittest.TestCase):
+class Vl5xTestCase(unittest.TestCase):
 
     def test_vl5x(self):
         online_test_data = []

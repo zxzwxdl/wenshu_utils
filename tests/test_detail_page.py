@@ -8,14 +8,14 @@ from wenshu_utils.document.parse import parse_detail
 from wenshu_utils.wzws.decrypt import decrypt_wzws
 
 
-class TestDetailPage(unittest.TestCase):
+class DetailPageTestCase(unittest.TestCase):
     def setUp(self):
-        self.error_msg = "请开启JavaScript并刷新该页"
-
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36",
         })
+
+        self.error_msg = "请开启JavaScript并刷新该页"
 
     def tearDown(self):
         self.session.close()
@@ -37,7 +37,7 @@ class TestDetailPage(unittest.TestCase):
                 if self.error_msg not in text:
                     break
             else:
-                self.fail("连续{}次获取wzws_cid失败".format(retry))
+                self.fail("连续{}次获取数据失败".format(retry))
 
         group_dict = parse_detail(response.text)
         pprint(group_dict)
