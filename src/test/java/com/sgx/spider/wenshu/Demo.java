@@ -17,18 +17,18 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Demo {
     private static final String DOMAIN = "wenshu.court.gov.cn";
@@ -38,55 +38,20 @@ public class Demo {
     private static CloseableHttpClient httpClient = HttpClients.custom()
             .setDefaultRequestConfig(requestConfig)
             .setDefaultCookieStore(cookieStore)
+            // 设置重定向策略，允许所有method的自动重定向，配合列表页post返回307的重定向
+            .setRedirectStrategy(new LaxRedirectStrategy())
             .build();
 
     private static final String errorMsg = "请开启JavaScript并刷新该页";
 
     @Test
     public void listPage() throws Exception {
-        String initUrl = "http://wenshu.court.gov.cn/list/list";
-        HttpGet httpGet = new HttpGet(initUrl);
-
-        String text;
-        try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
-            text = EntityUtils.toString(response.getEntity(), "UTF-8");
-        }
-
-        if (text.contains(errorMsg)) {
-            int retry = 3;
-            boolean success = false;
-            for (int i = 0; i < retry; i++) {
-                String redirectUrl = WZWSParser.parse(text);
-                try (CloseableHttpResponse response = httpClient.execute(new HttpGet(redirectUrl))) {
-                    text = EntityUtils.toString(response.getEntity(), "UTF-8");
-                }
-                if (!text.contains(errorMsg)) {
-                    success = true;
-                    break;
-                }
-            }
-            if (!success) {
-                throw new Exception("fail");
-            }
-        }
-
-        //
         String url = "http://wenshu.court.gov.cn/List/ListContent";
-        HttpPost httpPost = new HttpPost(url);
 
-        Vjkl5 vjkl5 = null;
-        for (Cookie c : cookieStore.getCookies()) {
-            if (Objects.equals(c.getName(), "vjkl5")) {
-                vjkl5 = new Vjkl5(c.getValue());
-                break;
-            }
-        }
-        if (vjkl5 == null) {
-            vjkl5 = new Vjkl5();
-            BasicClientCookie cookie = new BasicClientCookie("vjkl5", vjkl5.getValue());
-            cookie.setDomain(DOMAIN);
-            cookieStore.addCookie(cookie);
-        }
+        Vjkl5 vjkl5 = new Vjkl5();
+        BasicClientCookie cookie = new BasicClientCookie("vjkl5", vjkl5.getValue());
+        cookie.setDomain(DOMAIN);
+        cookieStore.addCookie(cookie);
 
         List<NameValuePair> data = new ArrayList<>();
         data.add(new BasicNameValuePair("Param", "案件类型:刑事案件"));
@@ -97,10 +62,35 @@ public class Demo {
         data.add(new BasicNameValuePair("vl5x", new Vl5x(vjkl5).getValue()));
         data.add(new BasicNameValuePair("number", new Number().getValue()));
         data.add(new BasicNameValuePair("guid", new Guid().getValue()));
-        httpPost.setEntity(new UrlEncodedFormEntity(data, "UTF-8"));
+        UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(data, "UTF-8");
 
+        String text;
+
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(formEntity);
         try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-            text = EntityUtils.toString(response.getEntity());
+            text = EntityUtils.toString(response.getEntity(), "UTF-8");
+        }
+
+        if (text.contains(errorMsg)) {
+            int retry = 3;
+            boolean success = false;
+            for (int i = 0; i < retry; i++) {
+                String redirectUrl = WZWSParser.parse(text);
+
+                httpPost = new HttpPost(redirectUrl);
+                httpPost.setEntity(formEntity);
+                try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+                    text = EntityUtils.toString(response.getEntity(), "UTF-8");
+                }
+                if (!text.contains(errorMsg)) {
+                    success = true;
+                    break;
+                }
+            }
+            if (!success) {
+                throw new Exception(String.format("连续%d获取数据失败", retry));
+            }
         }
 
         List<JSONObject> jsonObjects = JSON.parseArray((String) JSON.parse(text), JSONObject.class);
@@ -127,12 +117,12 @@ public class Demo {
     public void detailPage() throws Exception {
         String url = "http://wenshu.court.gov.cn/CreateContentJS/CreateContentJS.aspx";
 
-        URIBuilder uriBuilder = new URIBuilder(url);
-        uriBuilder.addParameter("DocID", "8f0230e9-f0e4-418f-a8e0-4c24677c7a79");
-
-        HttpGet httpGet = new HttpGet(uriBuilder.build());
-
         String text;
+
+        URI uri = new URIBuilder(url)
+                .addParameter("DocID", "8f0230e9-f0e4-418f-a8e0-4c24677c7a79")
+                .build();
+        HttpGet httpGet = new HttpGet(uri);
         try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
             text = EntityUtils.toString(response.getEntity(), "UTF-8");
         }
@@ -151,7 +141,7 @@ public class Demo {
                 }
             }
             if (!success) {
-                throw new Exception("fail");
+                throw new Exception(String.format("连续%d获取数据失败", retry));
             }
         }
 
