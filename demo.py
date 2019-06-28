@@ -21,23 +21,7 @@ class Demo:
 
     def list_page(self):
         """文书列表页"""
-        html_url = "http://wenshu.court.gov.cn/list/list"
-        response = self.session.get(html_url)
-        text = response.content.decode()
-
-        if self.error_msg in text:
-            retry = 3
-            for _ in range(retry):
-                redirect_url = decrypt_wzws(text)
-                response = self.session.get(redirect_url)
-                text = response.content.decode()
-                if self.error_msg not in text:
-                    break
-            else:
-                raise Exception("连续{}次获取wzws_cid失败".format(retry))
-
-        #
-        ajax_url = "http://wenshu.court.gov.cn/List/ListContent"
+        url = "http://wenshu.court.gov.cn/List/ListContent"
         data = {
             "Param": "案件类型:刑事案件",
             "Index": 1,
@@ -48,7 +32,19 @@ class Demo:
             "number": Number(),
             "guid": Guid(),
         }
-        response = self.session.post(ajax_url, data=data)
+        response = self.session.post(url, data=data)
+        text = response.content.decode()
+
+        if self.error_msg in text:
+            retry = 3
+            for _ in range(retry):
+                redirect_url = decrypt_wzws(text)
+                response = self.session.post(redirect_url, data=data)
+                text = response.content.decode()
+                if self.error_msg not in text:
+                    break
+            else:
+                raise Exception("连续{}次获取数据失败".format(retry))
 
         json_data = json.loads(response.json())
         print("列表数据:", json_data)
@@ -86,7 +82,7 @@ class Demo:
                 if self.error_msg not in text:
                     break
             else:
-                raise Exception("连续{}次获取wzws_cid失败".format(retry))
+                raise Exception("连续{}次获取数据失败".format(retry))
 
         group_dict = parse_detail(response.text)
         pprint(group_dict)
