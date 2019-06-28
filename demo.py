@@ -17,21 +17,24 @@ class Demo:
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36",
         })
 
+        self.error_msg = "请开启JavaScript并刷新该页"
+
     def list_page(self):
+        """文书列表页"""
         html_url = "http://wenshu.court.gov.cn/list/list"
         response = self.session.get(html_url)
         text = response.content.decode()
 
-        retry = 3
-        for _ in range(retry):
-            if "请开启JavaScript并刷新该页" in text:
+        if self.error_msg in text:
+            retry = 3
+            for _ in range(retry):
                 redirect_url = decrypt_wzws(text)
                 response = self.session.get(redirect_url)
                 text = response.content.decode()
+                if self.error_msg not in text:
+                    break
             else:
-                break
-        else:
-            raise Exception("连续{}次获取wzws_cid失败".format(retry))
+                raise Exception("连续{}次获取wzws_cid失败".format(retry))
 
         #
         ajax_url = "http://wenshu.court.gov.cn/List/ListContent"
@@ -74,16 +77,16 @@ class Demo:
         response = self.session.get(url, params=params)
         text = response.content.decode()
 
-        retry = 3
-        for _ in range(retry):
-            if "请开启JavaScript并刷新该页" in text:
+        if self.error_msg in text:
+            retry = 3
+            for _ in range(retry):
                 redirect_url = decrypt_wzws(text)
                 response = self.session.get(redirect_url)
                 text = response.content.decode()
+                if self.error_msg not in text:
+                    break
             else:
-                break
-        else:
-            raise Exception("连续{}次获取wzws_cid失败".format(retry))
+                raise Exception("连续{}次获取wzws_cid失败".format(retry))
 
         group_dict = parse_detail(response.text)
         pprint(group_dict)

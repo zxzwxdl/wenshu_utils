@@ -28,16 +28,16 @@ class TestDetailPage(unittest.TestCase):
         response = self.session.get(url, params=params)
         text = response.content.decode()
 
-        retry = 3
-        for _ in range(retry):
-            if self.error_msg in text:
+        if self.error_msg in text:
+            retry = 3
+            for _ in range(retry):
                 redirect_url = decrypt_wzws(text)
                 response = self.session.get(redirect_url)
                 text = response.content.decode()
+                if self.error_msg not in text:
+                    break
             else:
-                break
-        else:
-            self.fail("连续{}次获取wzws_cid失败".format(retry))
+                self.fail("连续{}次获取wzws_cid失败".format(retry))
 
         group_dict = parse_detail(response.text)
         pprint(group_dict)
