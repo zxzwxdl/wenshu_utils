@@ -40,6 +40,8 @@ public class Demo {
             .setDefaultCookieStore(cookieStore)
             .build();
 
+    private static final String errorMsg = "请开启JavaScript并刷新该页";
+
     @Test
     public void listPage() throws Exception {
         String initUrl = "http://wenshu.court.gov.cn/list/list";
@@ -50,24 +52,25 @@ public class Demo {
             text = EntityUtils.toString(response.getEntity(), "UTF-8");
         }
 
-        int retry = 3;
-        boolean success = false;
-        for (int i = 0; i < retry; i++) {
-            if (text.contains("请开启JavaScript并刷新该页")) {
+        if (text.contains(errorMsg)) {
+            int retry = 3;
+            boolean success = false;
+            for (int i = 0; i < retry; i++) {
                 String redirectUrl = WZWSParser.parse(text);
-                System.out.println(redirectUrl);
                 try (CloseableHttpResponse response = httpClient.execute(new HttpGet(redirectUrl))) {
                     text = EntityUtils.toString(response.getEntity(), "UTF-8");
                 }
-            } else {
-                success = true;
-                break;
+                if (!text.contains(errorMsg)) {
+                    success = true;
+                    break;
+                }
+            }
+            if (!success) {
+                throw new Exception("fail");
             }
         }
-        if (!success) {
-            throw new Exception("fail");
-        }
 
+        //
         String url = "http://wenshu.court.gov.cn/List/ListContent";
         HttpPost httpPost = new HttpPost(url);
 
@@ -134,22 +137,22 @@ public class Demo {
             text = EntityUtils.toString(response.getEntity(), "UTF-8");
         }
 
-        int retry = 3;
-        boolean success = false;
-        for (int i = 0; i < retry; i++) {
-            if (text.contains("请开启JavaScript并刷新该页")) {
+        if (text.contains(errorMsg)) {
+            int retry = 3;
+            boolean success = false;
+            for (int i = 0; i < retry; i++) {
                 String redirectUrl = WZWSParser.parse(text);
-
                 try (CloseableHttpResponse response = httpClient.execute(new HttpGet(redirectUrl))) {
                     text = EntityUtils.toString(response.getEntity(), "UTF-8");
                 }
-            } else {
-                success = true;
-                break;
+                if (!text.contains(errorMsg)) {
+                    success = true;
+                    break;
+                }
             }
-        }
-        if (!success) {
-            throw new Exception("fail");
+            if (!success) {
+                throw new Exception("fail");
+            }
         }
 
         System.out.println(text);
