@@ -35,15 +35,15 @@ class Demo:
 
         if "请开启JavaScript并刷新该页" in text:
             # 如果使用代理，确保请求1和请求2的ip为同一个，否则将继续返回"请开启JavaScript并刷新该页"
-            redirect_url = decrypt_wzws(text)
-            response = self.session.post(redirect_url, data=data)  # 请求2
+            dynamic_url = decrypt_wzws(text)
+            response = self.session.post(dynamic_url, data=data)  # 请求2
 
         json_data = json.loads(response.json())
         print("列表数据:", json_data)
 
-        run_eval = json_data.pop(0)["RunEval"]
+        runeval = json_data.pop(0)["RunEval"]
         try:
-            key = decrypt_runeval(run_eval)
+            key = decrypt_runeval(runeval)
         except ValueError as e:
             raise ValueError("返回脏数据") from e
         else:
@@ -67,8 +67,8 @@ class Demo:
 
         if "请开启JavaScript并刷新该页" in text:
             # 如果使用代理，确保请求1和请求2的ip为同一个，否则将继续返回"请开启JavaScript并刷新该页"
-            redirect_url = decrypt_wzws(text)
-            response = self.session.get(redirect_url)  # 请求2
+            dynamic_url = decrypt_wzws(text)
+            response = self.session.get(dynamic_url)  # 请求2
 
         group_dict = parse_detail(response.text)
         pprint(group_dict)
