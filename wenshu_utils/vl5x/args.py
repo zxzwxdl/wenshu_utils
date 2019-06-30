@@ -1,5 +1,6 @@
 import hashlib
 import random
+from typing import Union
 
 from . import _vl5x
 
@@ -12,14 +13,14 @@ class Vjkl5(str):
 
 class Vl5x(str):
 
-    def __new__(cls, vjkl5: str):
+    def __new__(cls, vjkl5: Union[Vjkl5, str]):
         return _vl5x.get_vl5x(vjkl5)
 
 
 class Number(str):
 
     def __new__(cls, *args, **kwargs):
-        return "wens"
+        return "{:.2f}".format(random.random())
 
 
 class Guid(str):

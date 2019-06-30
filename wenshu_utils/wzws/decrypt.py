@@ -24,16 +24,12 @@ def _decrypt_by_python(text: str) -> str:
     factor = int(group_dict["factor"])
     path = group_dict["path"]
 
-    challenge = "WZWS_CONFIRM_PREFIX_LABEL{}".format(sum(ord(i) for i in question) * factor + 111111)
-    encoded_challenge = base64.b64encode(challenge.encode()).decode()
+    label = "WZWS_CONFIRM_PREFIX_LABEL{}".format(sum(ord(i) for i in question) * factor + 111111)
+    challenge = base64.b64encode(label.encode()).decode()
 
-    url = parse.urljoin(base_url, path)
-    params = {
-        "wzwschallenge": encoded_challenge,
-    }
-
-    redirect_url = url + "?" + "&".join(f"{k}={v}" for k, v in params.items())
-    return redirect_url
+    dynamic_url = parse.urljoin(base_url, path)
+    dynamic_url = "{url}?{query}".format(url=dynamic_url, query="wzwschallenge={}".format(challenge))
+    return dynamic_url
 
 
 def _decrypt_by_nodejs(text: str) -> str:
@@ -54,5 +50,5 @@ def _decrypt_by_nodejs(text: str) -> str:
     ctx = execjs.get(Node).compile(custom_js + js)
     location = ctx.call("get_location")
 
-    redirect_url = parse.urljoin(base_url, location)
-    return redirect_url
+    dynamic_url = parse.urljoin(base_url, location)
+    return dynamic_url
