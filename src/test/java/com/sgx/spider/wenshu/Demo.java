@@ -1,7 +1,7 @@
 package com.sgx.spider.wenshu;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sgx.spider.wenshu.docid.DocIdDecryptor;
 import com.sgx.spider.wenshu.docid.RunEvalParser;
 import com.sgx.spider.wenshu.vl5x.Guid;
@@ -29,12 +29,16 @@ import org.junit.Test;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Demo {
     private static final String DOMAIN = "wenshu.court.gov.cn";
 
     private static BasicCookieStore cookieStore = new BasicCookieStore();
     private static CloseableHttpClient httpClient = HttpClients.custom()
+            // 标准的cookie规范
             .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
             .setDefaultCookieStore(cookieStore)
             // 设置重定向策略，允许所有method的自动重定向，配合列表页post返回307的重定向
@@ -71,32 +75,32 @@ public class Demo {
 
         if (text.contains("请开启JavaScript并刷新该页")) {
             // 如果使用代理，确保请求1和请求2的ip为同一个，否则将继续返回"请开启JavaScript并刷新该页"
-            String redirectUrl = WZWSParser.parse(text);
+            String dynamicUrl = WZWSParser.parse(text);
+            httpPost.setURI(URI.create(dynamicUrl));
 
-            httpPost = new HttpPost(redirectUrl);
-            httpPost.setEntity(formEntity);
             try (CloseableHttpResponse response = httpClient.execute(httpPost)) {// 请求2
                 text = EntityUtils.toString(response.getEntity(), "UTF-8");
             }
         }
 
-        List<JSONObject> jsonObjects = JSON.parseArray((String) JSON.parse(text), JSONObject.class);
-        System.out.println("列表数据: " + jsonObjects);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String s = objectMapper.readValue(text, String.class);
+        List<Map<String, String>> list = objectMapper.readValue(s, new TypeReference<List<Map<String, String>>>() {
+        });
+        System.out.println("列表数据: " + list);
 
-        String runEval = jsonObjects.get(0).getString("RunEval");
+        String runEval = list.get(0).get("RunEval");
         String key = RunEvalParser.parse(runEval);
-        System.out.println("RunEval解析完成: " + key);
-        System.out.println();
+        System.out.println("RunEval解析完成: " + key + "\n");
 
         DocIdDecryptor decryptor = new DocIdDecryptor(key);
 
-        for (int i = 1; i < jsonObjects.size(); i++) {
-            JSONObject item = jsonObjects.get(i);
-            String cipherText = item.getString("文书ID");
+        for (int i = 1; i < list.size(); i++) {
+            Map<String, String> item = list.get(i);
+            String cipherText = item.get("文书ID");
             System.out.println("解密: " + cipherText);
             String docId = decryptor.decryptDocId(cipherText);
-            System.out.println("成功, 文书ID: " + docId);
-            System.out.println();
+            System.out.println("成功, 文书ID: " + docId + "\n");
         }
     }
 
@@ -116,13 +120,30 @@ public class Demo {
 
         if (text.contains("请开启JavaScript并刷新该页")) {
             // 如果使用代理，确保请求1和请求2的ip为同一个，否则将继续返回"请开启JavaScript并刷新该页"
-            String redirectUrl = WZWSParser.parse(text);
+            String dynamicUrl = WZWSParser.parse(text);
+            httpGet.setURI(URI.create(dynamicUrl));
 
-            try (CloseableHttpResponse response = httpClient.execute(new HttpGet(redirectUrl))) {// 请求2
+            try (CloseableHttpResponse response = httpClient.execute(httpGet)) {// 请求2
                 text = EntityUtils.toString(response.getEntity(), "UTF-8");
             }
         }
 
         System.out.println(text);
+
+        // 提取数据
+        Pattern pattern = Pattern.compile("var caseinfo=JSON\\.stringify\\((?<caseInfo>.+?)\\);\\$.+var jsonHtmlData = (?<jsonHtmlData>\".+\");", Pattern.DOTALL);
+        Matcher m = pattern.matcher(text);
+        if (m.find()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            TypeReference ref = new TypeReference<Map<String, String>>() {
+            };
+
+            Map caseInfo = objectMapper.readValue(m.group("caseInfo"), ref);
+            System.out.println(caseInfo);
+
+            String s = objectMapper.readValue(m.group("jsonHtmlData"), String.class);
+            Map jsonHtmlData = objectMapper.readValue(s, ref);
+            System.out.println(jsonHtmlData);
+        }
     }
 }
