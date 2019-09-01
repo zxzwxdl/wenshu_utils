@@ -43,7 +43,7 @@ class PageID(str):
 
 
 class RequestVerificationToken(str):
-    def __new__(cls, size, *args, **kwargs):
+    def __new__(cls, size: int, *args, **kwargs):
         """
         function(size) {
             var str = ""
@@ -89,7 +89,7 @@ class CipherText(str):
         return cipher_text
 
     @staticmethod
-    def str2binary(string) -> str:
+    def str2binary(string: str) -> str:
         """
         function(str) {
             var result = [];
