@@ -134,7 +134,7 @@ class Demo:
             "ciphertext": CipherText.cipher(),
             "pageNum": 1,
             "pageSize": 5,
-            "queryCondition": json.dumps([{"key": "s8", "value": "03"}], ensure_ascii=False),  # 查询条件: s8=案件类型, 03=民事案件
+            "queryCondition": json.dumps([{"key": "s8", "value": "03"}]),  # 查询条件: s8=案件类型, 03=民事案件
             "cfg": "com.lawyee.judge.dc.parse.dto.SearchDataDsoDTO@queryDoc",
             "__RequestVerificationToken": RequestVerificationToken(24),
         }
