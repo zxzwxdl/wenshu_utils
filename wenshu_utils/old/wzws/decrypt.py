@@ -10,6 +10,7 @@ _pattern = re.compile(r"dynamicurl\|(?P<path>.+?)\|wzwsquestion\|(?P<question>.+
 
 
 def decrypt_wzws(text: str) -> str:
+    # noinspection PyBroadException
     try:
         return _decrypt_by_python(text)
     except Exception:

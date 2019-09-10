@@ -1,39 +1,25 @@
-## 裁判文书相关解析/解密工具 for Python
+## 裁判文书网 参数加解密工具库 for Python
 
-### 2019.09.01文书网更新，新demo参考demo20190901.py
+**本项目并非长期维护的项目，如果代码无法正常运行，那就是不能用了  
+另外请勿将本项目用于商业用途**
 
-截止到2019.08.31之前，文书网的反爬参数基本都能在这找到  
-全部参数解析/解密均用Python实现
+2019.09.01文书网更新，最新demo参考`new_demo.py`(最好配置代理测试)
 
-Java示例请切换到java分支~
+2019.09.01:  
 
-**此项目内容仅用于学习交流**
+    主要参数为请求参数中的ciphertext，以及响应中的des3加密数据
+    相关参数已经通过python实现并开源
+
+2019.09.07:
+
+    加上瑞数，主要参数为cookie中的 HM4hUBT0dDOn80S 和 HM4hUBT0dDOn80T 解决岂可正常请求
+    相关参数通过api提供
+
 
 ### 环境
 1. python3.5+
 2. 安装requirements.txt
-3. nodejs(外部依赖)
 
-默认使用python实现的方法去解析，如果出错，则调用nodejs去解析，所以需要装nodejs
 
-### 调用示例
-参考demo.py 或 tests/里的测试用例 
-
-### 测试
-手动运行tests/里的测试用例
-
-或
-
-通过pytest测试
-```bash
-pip install pytest
-pytest
-```
-
-或
-
-通过docker构建测试
-```bash
-docker build -t wenshu_utils .  # 构建镜像
-docker run --rm wenshu_utils    # 运行
-```
+### 其他
+旧版文书网(2019.09.01之前)的demo参考`old_demo.py`(可能需要nodejs环境)

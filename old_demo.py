@@ -1,25 +1,27 @@
+"""
+旧版文书网的demo(2019-09-01前的)
+"""
 import json
 from pprint import pprint
 
 import requests
 
-from wenshu_utils.docid.decrypt import decrypt_doc_id
-from wenshu_utils.docid.runeval import decrypt_runeval
-from wenshu_utils.document.parse import parse_detail
-from wenshu_utils.vl5x.args import Vjkl5, Vl5x, Number, Guid
-from wenshu_utils.wzws.decrypt import decrypt_wzws
+from wenshu_utils.old.docid.decrypt import decrypt_doc_id
+from wenshu_utils.old.docid.runeval import decrypt_runeval
+from wenshu_utils.old.document.parse import parse_detail
+from wenshu_utils.old.vl5x.args import Vjkl5, Vl5x, Number, Guid
 
 
-class Demo:
+class OldDemo:
     def __init__(self):
         self.session = requests.Session()
         self.session.headers.update({
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36",
         })
 
     def list_page(self):
         """文书列表页"""
-        url = "http://wenshu.court.gov.cn/List/ListContent"
+        url = "http://oldwenshu.court.gov.cn/List/ListContent"
         data = {
             "Param": "案件类型:刑事案件",
             "Index": 1,
@@ -30,13 +32,7 @@ class Demo:
             "number": Number(),
             "guid": Guid(),
         }
-        response = self.session.post(url, data=data)  # 请求1
-        text = response.content.decode()
-
-        if "请开启JavaScript并刷新该页" in text:
-            # 如果使用代理，确保请求1和请求2的ip为同一个，否则将继续返回"请开启JavaScript并刷新该页"
-            dynamic_url = decrypt_wzws(text)
-            response = self.session.post(dynamic_url, data=data)  # 请求2
+        response = self.session.post(url, data=data)
 
         json_data = json.loads(response.json())
         print("列表数据:", json_data)
@@ -58,23 +54,17 @@ class Demo:
 
     def detail_page(self):
         """文书详情页"""
-        url = "http://wenshu.court.gov.cn/CreateContentJS/CreateContentJS.aspx"
+        url = "http://oldwenshu.court.gov.cn/CreateContentJS/CreateContentJS.aspx"
         params = {
             "DocID": "029bb843-b458-4d1c-8928-fe80da403cfe",
         }
-        response = self.session.get(url, params=params)  # 请求1
-        text = response.content.decode()
-
-        if "请开启JavaScript并刷新该页" in text:
-            # 如果使用代理，确保请求1和请求2的ip为同一个，否则将继续返回"请开启JavaScript并刷新该页"
-            dynamic_url = decrypt_wzws(text)
-            response = self.session.get(dynamic_url)  # 请求2
+        response = self.session.get(url, params=params)
 
         group_dict = parse_detail(response.text)
         pprint(group_dict)
 
 
 if __name__ == '__main__':
-    demo = Demo()
+    demo = OldDemo()
     demo.list_page()
     demo.detail_page()
