@@ -34,6 +34,15 @@ class OldDemo:
         }
         response = self.session.post(url, data=data)
 
+        if response.status_code != 200:
+            raise Exception(response.status_code)
+
+        if response.content == b'"remind"':
+            raise Exception("访问限制，请使用代理")
+
+        if b"window.location.href" in response.content:
+            raise Exception("需要验证码，请自行打码或使用代理")
+
         json_data = json.loads(response.json())
         print("列表数据:", json_data)
 
@@ -59,6 +68,12 @@ class OldDemo:
             "DocID": "029bb843-b458-4d1c-8928-fe80da403cfe",
         }
         response = self.session.get(url, params=params)
+
+        if response.status_code != 200:
+            raise Exception(response.status_code)
+
+        if b"window.location.href" in response.content:
+            raise Exception("需要验证码，请自行打码或使用代理")
 
         group_dict = parse_detail(response.text)
         pprint(group_dict)

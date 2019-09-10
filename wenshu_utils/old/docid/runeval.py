@@ -7,8 +7,9 @@ from ._unzip import unzip
 
 
 def decrypt_runeval(runeval: str) -> str:
-    if runeval.startswith("w63"):
-        raise ValueError("invalid RunEval: w63")
+    # TODO 2019.09.10更新，w63好像不是脏数据了，不过没仔细测试
+    # if runeval.startswith("w63"):
+    #     raise ValueError("invalid RunEval: w63")
 
     raw_js = unzip(runeval).decode()
 
