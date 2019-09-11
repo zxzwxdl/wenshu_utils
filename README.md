@@ -13,7 +13,7 @@
 
 2019.09.07:
 
-    加上瑞数，主要参数为cookie中的 HM4hUBT0dDOn80S 和 HM4hUBT0dDOn80T 解决岂可正常请求
+    加上瑞数，主要参数为cookie中的 HM4hUBT0dDOn80S 和 HM4hUBT0dDOn80T 解决即可正常请求
     相关参数通过api提供
 
 
