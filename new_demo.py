@@ -16,6 +16,8 @@ API = "http://120.78.76.198:8000/wenshu"
 
 
 class NewDemo:
+    url: parse.ParseResult = parse.urlparse("http://wenshu.court.gov.cn/website/parse/rest.q4w")
+
     def __init__(self):
         self.session = requests.Session()
         self.session.headers.update({
@@ -23,11 +25,14 @@ class NewDemo:
         })
         # self.session.proxies = # TODO 配置你的代理
 
-    def _request(self, url: str, data: dict) -> requests.Response:
-        response = requests.post(API, json=dict(path=parse.urlparse(url).path, data=data))
+    def _request(self, data: dict) -> requests.Response:
+        response = requests.post(API, json={"path": self.url.path, "request_args": data})
+        if response.status_code != 200:
+            raise Exception(response.text)
+
         kwargs = response.json()
 
-        response = self.session.post(url, **kwargs)
+        response = self.session.post(self.url.geturl(), **kwargs)
         if response.status_code != 200:
             raise Exception(response.status_code)
 
@@ -42,7 +47,6 @@ class NewDemo:
 
     def list_page(self):
         """文书列表页"""
-        url = "http://wenshu.court.gov.cn/website/parse/rest.q4w"
         data = {
             "pageId": PageID(),
             "sortFields": "s50:desc",
@@ -54,12 +58,11 @@ class NewDemo:
             "__RequestVerificationToken": RequestVerificationToken(24),
         }
 
-        result = self._request(url, data)
+        result = self._request(data)
         print(result)
 
     def detail_page(self):
         """文书详情页"""
-        url = "http://wenshu.court.gov.cn/website/parse/rest.q4w"
         data = {
             "docId": "4e00b8ae589b4288a725aabe00c0e683",
             "ciphertext": CipherText(),
@@ -67,7 +70,7 @@ class NewDemo:
             "__RequestVerificationToken": RequestVerificationToken(24),
         }
 
-        result = self._request(url, data)
+        result = self._request(data)
         print(result)
 
 

@@ -43,6 +43,9 @@ class OldDemo:
         if b"window.location.href" in response.content:
             raise Exception("需要验证码，请自行打码或使用代理")
 
+        if "500错误".encode() in response.content:
+            raise Exception("500错误，服务器繁忙")
+
         json_data = json.loads(response.json())
         print("列表数据:", json_data)
 
@@ -74,6 +77,9 @@ class OldDemo:
 
         if b"window.location.href" in response.content:
             raise Exception("需要验证码，请自行打码或使用代理")
+
+        if "500错误".encode() in response.content:
+            raise Exception("500错误，服务器繁忙")
 
         group_dict = parse_detail(response.text)
         pprint(group_dict)
