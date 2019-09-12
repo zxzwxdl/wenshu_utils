@@ -1,4 +1,4 @@
-package com.sgx.spider.wenshu.vl5x;
+package com.songguoxiong.wenshu.utils.old.vl5x;
 
 public class Number {
     private final static String value = "wens";

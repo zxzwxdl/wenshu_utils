@@ -1,14 +1,14 @@
-package com.sgx.spider.wenshu;
+package com.songguoxiong.wenshu;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sgx.spider.wenshu.docid.DocIdDecryptor;
-import com.sgx.spider.wenshu.docid.RunEvalParser;
-import com.sgx.spider.wenshu.vl5x.Guid;
-import com.sgx.spider.wenshu.vl5x.Number;
-import com.sgx.spider.wenshu.vl5x.Vjkl5;
-import com.sgx.spider.wenshu.vl5x.Vl5x;
-import com.sgx.spider.wenshu.wzws.WZWSParser;
+import com.songguoxiong.wenshu.utils.old.docid.DocIdDecryptor;
+import com.songguoxiong.wenshu.utils.old.docid.RunEvalParser;
+import com.songguoxiong.wenshu.utils.old.vl5x.Guid;
+import com.songguoxiong.wenshu.utils.old.vl5x.Number;
+import com.songguoxiong.wenshu.utils.old.vl5x.Vjkl5;
+import com.songguoxiong.wenshu.utils.old.vl5x.Vl5x;
+import com.songguoxiong.wenshu.utils.old.wzws.WZWSParser;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;

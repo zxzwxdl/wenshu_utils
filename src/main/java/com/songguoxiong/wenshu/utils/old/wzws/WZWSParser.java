@@ -1,4 +1,4 @@
-package com.sgx.spider.wenshu.wzws;
+package com.songguoxiong.wenshu.utils.old.wzws;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
