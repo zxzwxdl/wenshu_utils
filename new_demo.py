@@ -26,13 +26,13 @@ class NewDemo:
         # self.session.proxies = # TODO 配置你的代理
 
     def _request(self, data: dict) -> requests.Response:
-        response = requests.post(API, json={"path": self.url.path, "request_args": data})
-        if response.status_code != 200:
-            raise Exception(response.text)
+        # response = requests.post(API, json={"path": self.url.path, "request_args": data})
+        # if response.status_code != 200:
+        #     raise Exception(response.text)
+        # 
+        # kwargs = response.json()
 
-        kwargs = response.json()
-
-        response = self.session.post(self.url.geturl(), **kwargs)
+        response = self.session.post(self.url.geturl(), data=data)
         if response.status_code != 200:
             raise Exception(response.status_code)
 
