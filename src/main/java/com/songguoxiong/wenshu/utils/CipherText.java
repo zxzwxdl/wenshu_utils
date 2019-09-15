@@ -11,11 +11,26 @@ public class CipherText {
     }
 
     private String cipher() {
-        return null;
+        Date date = new Date();
+
+        long timestamp = date.getTime();
+        String salt = new RequestVerificationToken(24).getValue();
+        String iv = new SimpleDateFormat("yyyyMMdd").format(date);
+
+        try {
+            String enc = DES3.encrypt(Long.toString(timestamp), salt, iv);
+            return str2binary(salt + iv + enc);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
-    private byte[] str2binary() {
-        return null;
+    private String str2binary(String string) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < string.length(); i++) {
+            sb.append(Integer.toBinaryString(string.charAt(i))).append(" ");
+        }
+        return sb.toString().trim();
     }
 
     public String getValue() {
@@ -25,15 +40,5 @@ public class CipherText {
     @Override
     public String toString() {
         return getValue();
-    }
-
-    public static void main(String[] args) {
-        Date date = new Date();
-
-        long timestamp = date.getTime();
-        String salt = new RequestVerificationToken(24).getValue();
-        String iv = new SimpleDateFormat("yyyyMMdd").format(date);
-
-        
     }
 }
