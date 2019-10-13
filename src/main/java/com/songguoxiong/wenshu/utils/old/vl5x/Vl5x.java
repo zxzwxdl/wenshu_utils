@@ -1,18 +1,15 @@
 package com.songguoxiong.wenshu.utils.old.vl5x;
 
+import com.songguoxiong.wenshu.utils.old.common.StringUtils;
+
 import java.lang.reflect.Method;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 
 public class Vl5x {
-    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
     private final Vjkl5 vjkl5;
-
     private String value;
 
     public Vl5x(String vjkl5) {
-        this.vjkl5 = new Vjkl5(vjkl5);
+        this(new Vjkl5(vjkl5));
     }
 
     public Vl5x(Vjkl5 vjkl5) {
@@ -42,37 +39,12 @@ public class Vl5x {
         return getValue();
     }
 
-    private String base64encode(String s) {
-        return Base64.getEncoder().encodeToString(s.getBytes());
-    }
-
     private String md5ToHex(String str) {
-        return digestToHex(str, "MD5");
+        return StringUtils.md5ToHex(str).toLowerCase();
     }
 
     private String sha1ToHex(String str) {
-        return digestToHex(str, "SHA1");
-    }
-
-    private String digestToHex(String str, String algorithm) {
-        try {
-            MessageDigest md = MessageDigest.getInstance(algorithm);
-            byte[] digest = md.digest(str.getBytes());
-            return bytesToHex(digest);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for (int i = 0; i < bytes.length; i++) {
-            int v = bytes[i] & 0xFF;
-            hexChars[i * 2] = hexArray[v >>> 4];
-            hexChars[i * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars).toLowerCase();
+        return StringUtils.sha1ToHex(str).toLowerCase();
     }
 
     private String strToLong(String str) {
@@ -136,22 +108,22 @@ public class Vl5x {
     }
 
     private String makeKey5(String str) {
-        str = base64encode(str.substring(5, 30) + str.substring(1, 3) + "1") + str.substring(36, 39);
+        str = StringUtils.toBase64(str.substring(5, 30) + str.substring(1, 3) + "1") + str.substring(36, 39);
         return md5ToHex(str).substring(4, 28);
     }
 
     private String makeKey6(String str) {
         str = str.substring(5, 30) + str.substring(36, 39);
-        return md5ToHex(str.substring(6) + (base64encode(str.substring(4, 14)) + str.substring(2)).substring(2)).substring(2, 26);
+        return md5ToHex(str.substring(6) + (StringUtils.toBase64(str.substring(4, 14)) + str.substring(2)).substring(2)).substring(2, 26);
     }
 
     private String makeKey7(String str) {
-        str = base64encode(str.substring(5, 25) + "55" + str.substring(1, 3)) + str.substring(36, 39);
+        str = StringUtils.toBase64(str.substring(5, 25) + "55" + str.substring(1, 3)) + str.substring(36, 39);
         return md5ToHex(md5ToHex(str.substring(1)) + strToLong((strToLong(str.substring(5)) + str.substring(4)).substring(5))).substring(3, 27);
     }
 
     private String makeKey8(String str) {
-        str = base64encode(str.substring(5, 29) + "5-5") + str.substring(1, 3) + str.substring(36, 39);
+        str = StringUtils.toBase64(str.substring(5, 29) + "5-5") + str.substring(1, 3) + str.substring(36, 39);
         return md5ToHex(md5ToHex(str.substring(1)) + strToLongEn((strToLong(str.substring(5)) + str.substring(4)).substring(5))).substring(4, 28);
     }
 
@@ -161,7 +133,7 @@ public class Vl5x {
     }
 
     private String makeKey10(String str) {
-        str = base64encode(str.substring(5, 29) + "5") + str.substring(1, 3) + str.substring(36, 39);
+        str = StringUtils.toBase64(str.substring(5, 29) + "5") + str.substring(1, 3) + str.substring(36, 39);
         return md5ToHex(md5ToHex(str.substring(1)) + sha1ToHex((strToLong(str.substring(5)) + str.substring(4)).substring(5))).substring(4, 28);
     }
 
@@ -177,27 +149,27 @@ public class Vl5x {
 
     private String makeKey13(String str) {
         str = str.substring(5, 29) + "2" + str.substring(1, 3);
-        return md5ToHex(base64encode(str.substring(1) + sha1ToHex(str.substring(5)))).substring(1, 25);
+        return md5ToHex(StringUtils.toBase64(str.substring(1) + sha1ToHex(str.substring(5)))).substring(1, 25);
     }
 
     private String makeKey14(String str) {
         str = str.substring(5, 29) + "2" + str.substring(1, 3);
-        return sha1ToHex(base64encode((str.substring(1) + str.substring(5) + str.substring(1, 4)))).substring(1, 25);
+        return sha1ToHex(StringUtils.toBase64((str.substring(1) + str.substring(5) + str.substring(1, 4)))).substring(1, 25);
     }
 
     private String makeKey15(String str) {
         str = str.substring(5, 29) + "2" + str.substring(1, 3);
-        return sha1ToHex(base64encode(((strToLong(str.substring(5)) + str.substring(2)).substring(1) + str.substring(5) + str.substring(2, 5)))).substring(1, 25);
+        return sha1ToHex(StringUtils.toBase64(((strToLong(str.substring(5)) + str.substring(2)).substring(1) + str.substring(5) + str.substring(2, 5)))).substring(1, 25);
     }
 
     private String makeKey16(String str) {
         str = str.substring(5, 29) + "2" + str.substring(1, 3) + "-5";
-        return md5ToHex(base64encode(((strToLongEn(str.substring(5)) + str.substring(2)).substring(1))) + strToLongEn2(str.substring(5), 5) + str.substring(2, 5)).substring(2, 26);
+        return md5ToHex(StringUtils.toBase64(((strToLongEn(str.substring(5)) + str.substring(2)).substring(1))) + strToLongEn2(str.substring(5), 5) + str.substring(2, 5)).substring(2, 26);
     }
 
     private String makeKey17(String str) {
         str = str.substring(5, 29) + "7" + str.substring(1, 3) + "-5";
-        return md5ToHex(base64encode(((strToLongEn(str.substring(5)) + str.substring(2)).substring(1))) + strToLongEn2(str.substring(5), 6) + str.substring(7, 10)).substring(0, 24);
+        return md5ToHex(StringUtils.toBase64(((strToLongEn(str.substring(5)) + str.substring(2)).substring(1))) + strToLongEn2(str.substring(5), 6) + str.substring(7, 10)).substring(0, 24);
     }
 
     private String makeKey18(String str) {

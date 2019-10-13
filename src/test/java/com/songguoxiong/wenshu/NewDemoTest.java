@@ -12,12 +12,13 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
-public class Demo {
+public class NewDemoTest {
     private static CloseableHttpClient httpClient = HttpClients.createDefault();
 
     private static ObjectMapper objectMapper = new ObjectMapper();
@@ -43,30 +44,34 @@ public class Demo {
 
     @Test
     public void listPage() throws Exception {
-        List<BasicNameValuePair> formData = List.of(
-                new BasicNameValuePair("pageID", new PageID().getValue()),
-                new BasicNameValuePair("sortFields", "s50:desc"),
-                new BasicNameValuePair("ciphertext", new CipherText().getValue()),
-                new BasicNameValuePair("pageNum", "1"),
-                new BasicNameValuePair("pageSize", "5"),
-                new BasicNameValuePair("queryCondition", objectMapper.writeValueAsString(List.of(
-                        Map.of("key", "s8", "value", "03"))
-                )),
-                new BasicNameValuePair("cfg", "com.lawyee.judge.dc.parse.dto.SearchDataDsoDTO@queryDoc"),
-                new BasicNameValuePair("__RequestVerificationToken", new RequestVerificationToken(24).getValue())
-        );
+        List<BasicNameValuePair> formData = new ArrayList<>();
+
+        HashMap<String, String> m = new HashMap<>();
+        m.put("key", "s8");
+        m.put("value", "03");
+
+        ArrayList<HashMap> queryCondition = new ArrayList<>();
+        queryCondition.add(m);
+
+        formData.add(new BasicNameValuePair("pageID", new PageID().getValue()));
+        formData.add(new BasicNameValuePair("sortFields", "s50:desc"));
+        formData.add(new BasicNameValuePair("ciphertext", new CipherText().getValue()));
+        formData.add(new BasicNameValuePair("pageNum", "1"));
+        formData.add(new BasicNameValuePair("pageSize", "5"));
+        formData.add(new BasicNameValuePair("queryCondition", objectMapper.writeValueAsString(queryCondition)));
+        formData.add(new BasicNameValuePair("cfg", "com.lawyee.judge.dc.parse.dto.SearchDataDsoDTO@queryDoc"));
+        formData.add(new BasicNameValuePair("__RequestVerificationToken", new RequestVerificationToken(24).getValue()));
 
         System.out.println(request(formData));
     }
 
     @Test
     public void detailPage() throws Exception {
-        List<BasicNameValuePair> formData = List.of(
-                new BasicNameValuePair("docId", "4e00b8ae589b4288a725aabe00c0e683"),
-                new BasicNameValuePair("ciphertext", new CipherText().getValue()),
-                new BasicNameValuePair("cfg", "com.lawyee.judge.dc.parse.dto.SearchDataDsoDTO@docInfoSearch"),
-                new BasicNameValuePair("__RequestVerificationToken", new RequestVerificationToken(24).getValue())
-        );
+        List<BasicNameValuePair> formData = new ArrayList<>();
+        formData.add(new BasicNameValuePair("docId", "4e00b8ae589b4288a725aabe00c0e683"));
+        formData.add(new BasicNameValuePair("ciphertext", new CipherText().getValue()));
+        formData.add(new BasicNameValuePair("cfg", "com.lawyee.judge.dc.parse.dto.SearchDataDsoDTO@docInfoSearch"));
+        formData.add(new BasicNameValuePair("__RequestVerificationToken", new RequestVerificationToken(24).getValue()));
 
         System.out.println(request(formData));
     }

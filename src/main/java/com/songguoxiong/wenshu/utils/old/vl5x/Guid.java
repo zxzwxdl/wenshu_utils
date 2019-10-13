@@ -1,6 +1,5 @@
 package com.songguoxiong.wenshu.utils.old.vl5x;
 
-
 public class Guid {
     private final String value;
 

@@ -1,7 +1,11 @@
 package com.songguoxiong.wenshu.utils.old.vl5x;
 
 public class Number {
-    private final static String value = "wens";
+    private final String value;
+
+    public Number() {
+        this.value = String.format("%.2f", Math.random());
+    }
 
     public String getValue() {
         return value;
