@@ -12,8 +12,6 @@ from wenshu_utils.des3 import des3decrypt
 from wenshu_utils.pageid import PageID
 from wenshu_utils.token import RequestVerificationToken
 
-API = "http://120.78.76.198:8000/wenshu"
-
 
 class NewDemo:
     url: parse.ParseResult = parse.urlparse("http://wenshu.court.gov.cn/website/parse/rest.q4w")
@@ -26,12 +24,6 @@ class NewDemo:
         # self.session.proxies = # TODO 配置你的代理
 
     def _request(self, data: dict) -> requests.Response:
-        # response = requests.post(API, json={"path": self.url.path, "request_args": data})
-        # if response.status_code != 200:
-        #     raise Exception(response.text)
-        # 
-        # kwargs = response.json()
-
         response = self.session.post(self.url.geturl(), data=data)
         if response.status_code != 200:
             raise Exception(response.status_code)
