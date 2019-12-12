@@ -5,12 +5,17 @@
 
 ### Demo (Java示例请切换到java分支)
 最新demo参考`new_demo.py`
+旧版文书网demo参考`old_demo.py`
 
 ### 环境
 1. python3.5+
 2. 安装requirements.txt
 
 ### 近况:
+2019.12.12左右
+
+    瑞数cookie再次下线...
+    
 2019.10.18
 
     恢复了瑞数的cookie校验
