@@ -11,7 +11,13 @@
 1. python3.5+
 2. 安装requirements.txt
 
-### 近况:
+<details>
+<summary>文书网变更历史</summary>
+    
+2019.12.20
+    
+    恢复了瑞数的cookie校验，并加入sojson
+
 2019.12.12左右
 
     瑞数cookie再次下线...
@@ -32,3 +38,5 @@
 
     文书网大更新，主要参数为请求参数中的ciphertext，以及响应中的des3加密数据
     相关参数已经通过python实现并开源
+
+<details/>
