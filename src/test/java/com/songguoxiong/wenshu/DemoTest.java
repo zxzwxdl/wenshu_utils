@@ -1,7 +1,9 @@
 package com.songguoxiong.wenshu;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.songguoxiong.wenshu.utils.*;
+import com.songguoxiong.wenshu.util.*;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -18,14 +20,17 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class NewDemoTest {
-    private static CloseableHttpClient httpClient = HttpClients.createDefault();
+public class DemoTest {
+    private static CloseableHttpClient httpClient = HttpClients.custom()
+            // 标准的cookie规范
+            .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+            .build();
 
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     private static String request(List<BasicNameValuePair> formData) throws Exception {
-        HttpPost httpPost = new HttpPost("http://wenshu.court.gov.cn/website/parse/rest.q4w");
-        httpPost.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36");
+        HttpPost httpPost = new HttpPost("https://wenshu.court.gov.cn/website/parse/rest.q4w");
+        httpPost.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36");
         httpPost.setEntity(new UrlEncodedFormEntity(formData, "UTF-8"));
 
         String text;
@@ -46,12 +51,12 @@ public class NewDemoTest {
     public void listPage() throws Exception {
         List<BasicNameValuePair> formData = new ArrayList<>();
 
-        HashMap<String, String> m = new HashMap<>();
-        m.put("key", "s8");
-        m.put("value", "03");
+        HashMap<String, String> conditionParams = new HashMap<>();
+        conditionParams.put("key", "s8");
+        conditionParams.put("value", "03");
 
-        ArrayList<HashMap> queryCondition = new ArrayList<>();
-        queryCondition.add(m);
+        ArrayList<HashMap<String, String>> queryCondition = new ArrayList<>();
+        queryCondition.add(conditionParams);
 
         formData.add(new BasicNameValuePair("pageID", new PageID().getValue()));
         formData.add(new BasicNameValuePair("sortFields", "s50:desc"));

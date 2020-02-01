@@ -1,4 +1,4 @@
-package com.songguoxiong.wenshu.utils;
+package com.songguoxiong.wenshu.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

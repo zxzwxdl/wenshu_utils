@@ -1,4 +1,4 @@
-package com.songguoxiong.wenshu.utils;
+package com.songguoxiong.wenshu.util;
 
 public class PageID {
     private final String value;
