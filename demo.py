@@ -1,9 +1,5 @@
-"""
-新版文书网的demo(2019-09-01后的)
-"""
 import json
 from datetime import datetime
-from urllib import parse
 
 import requests
 
@@ -13,18 +9,18 @@ from wenshu_utils.pageid import PageID
 from wenshu_utils.token import RequestVerificationToken
 
 
-class NewDemo:
-    url: parse.ParseResult = parse.urlparse("http://wenshu.court.gov.cn/website/parse/rest.q4w")
+class Demo:
+    url = "https://wenshu.court.gov.cn/website/parse/rest.q4w"
 
     def __init__(self):
         self.session = requests.Session()
         self.session.headers.update({
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36",
         })
         # self.session.proxies = # TODO 配置你的代理
 
-    def _request(self, data: dict) -> requests.Response:
-        response = self.session.post(self.url.geturl(), data=data)
+    def _request(self, data: dict) -> dict:
+        response = self.session.post(self.url, data=data)
         if response.status_code != 200:
             raise Exception(response.status_code)
 
@@ -38,7 +34,6 @@ class NewDemo:
         return result
 
     def list_page(self):
-        """文书列表页"""
         data = {
             "pageId": PageID(),
             "sortFields": "s50:desc",
@@ -54,7 +49,6 @@ class NewDemo:
         print(result)
 
     def detail_page(self):
-        """文书详情页"""
         data = {
             "docId": "4e00b8ae589b4288a725aabe00c0e683",
             "ciphertext": CipherText(),
@@ -67,6 +61,6 @@ class NewDemo:
 
 
 if __name__ == '__main__':
-    demo = NewDemo()
+    demo = Demo()
     demo.list_page()
     demo.detail_page()
