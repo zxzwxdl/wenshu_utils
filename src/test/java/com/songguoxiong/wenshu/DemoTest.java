@@ -1,56 +1,45 @@
 package com.songguoxiong.wenshu;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.songguoxiong.wenshu.util.*;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
+import com.songguoxiong.wenshu.utils.*;
 import org.junit.Test;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 
 public class DemoTest {
-    private static CloseableHttpClient httpClient = HttpClients.custom()
-            // 标准的cookie规范
-            .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+    private static Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("https://wenshu.court.gov.cn/")
+            .addConverterFactory(JacksonConverterFactory.create())
             .build();
+
+    private static WenshuService service = retrofit.create(WenshuService.class);
 
     private static ObjectMapper objectMapper = new ObjectMapper();
 
-    private static String request(List<BasicNameValuePair> formData) throws Exception {
-        HttpPost httpPost = new HttpPost("https://wenshu.court.gov.cn/website/parse/rest.q4w");
-        httpPost.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36");
-        httpPost.setEntity(new UrlEncodedFormEntity(formData, "UTF-8"));
+    public Response request(Call<Response> call) throws Exception {
+        Response response = call.execute().body();
 
-        String text;
-        try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-            text = EntityUtils.toString(response.getEntity(), "UTF-8");
+        if (response == null || !response.isSuccess()) {
+            return response;
         }
-
-        Response response = objectMapper.readValue(text, Response.class);
 
         String cipherText = response.getResult();
         String key = response.getSecretKey();
         String iv = new SimpleDateFormat("yyyyMMdd").format(new Date());
 
-        return DES3.decrypt(cipherText, key, iv);
+        response.setResult(DES3.decrypt(cipherText, key, iv));
+        return response;
     }
 
     @Test
     public void listPage() throws Exception {
-        List<BasicNameValuePair> formData = new ArrayList<>();
-
         HashMap<String, String> conditionParams = new HashMap<>();
         conditionParams.put("key", "s8");
         conditionParams.put("value", "03");
@@ -58,26 +47,27 @@ public class DemoTest {
         ArrayList<HashMap<String, String>> queryCondition = new ArrayList<>();
         queryCondition.add(conditionParams);
 
-        formData.add(new BasicNameValuePair("pageID", new PageID().getValue()));
-        formData.add(new BasicNameValuePair("sortFields", "s50:desc"));
-        formData.add(new BasicNameValuePair("ciphertext", new CipherText().getValue()));
-        formData.add(new BasicNameValuePair("pageNum", "1"));
-        formData.add(new BasicNameValuePair("pageSize", "5"));
-        formData.add(new BasicNameValuePair("queryCondition", objectMapper.writeValueAsString(queryCondition)));
-        formData.add(new BasicNameValuePair("cfg", "com.lawyee.judge.dc.parse.dto.SearchDataDsoDTO@queryDoc"));
-        formData.add(new BasicNameValuePair("__RequestVerificationToken", new RequestVerificationToken(24).getValue()));
-
-        System.out.println(request(formData));
+        Call<Response> list = service.list(
+                new PageID().getValue(),
+                "s50:desc",
+                new CipherText().getValue(),
+                1,
+                5,
+                objectMapper.writeValueAsString(queryCondition),
+                "com.lawyee.judge.dc.parse.dto.SearchDataDsoDTO@queryDoc",
+                new RequestVerificationToken(24).getValue()
+        );
+        System.out.println(request(list));
     }
 
     @Test
     public void detailPage() throws Exception {
-        List<BasicNameValuePair> formData = new ArrayList<>();
-        formData.add(new BasicNameValuePair("docId", "4e00b8ae589b4288a725aabe00c0e683"));
-        formData.add(new BasicNameValuePair("ciphertext", new CipherText().getValue()));
-        formData.add(new BasicNameValuePair("cfg", "com.lawyee.judge.dc.parse.dto.SearchDataDsoDTO@docInfoSearch"));
-        formData.add(new BasicNameValuePair("__RequestVerificationToken", new RequestVerificationToken(24).getValue()));
-
-        System.out.println(request(formData));
+        Call<Response> detail = service.detail(
+                "4e00b8ae589b4288a725aabe00c0e683",
+                new CipherText().getValue(),
+                "com.lawyee.judge.dc.parse.dto.SearchDataDsoDTO@docInfoSearch",
+                new RequestVerificationToken(24).getValue()
+        );
+        System.out.println(request(detail));
     }
 }

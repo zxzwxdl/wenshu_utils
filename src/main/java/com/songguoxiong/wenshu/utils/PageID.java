@@ -1,4 +1,4 @@
-package com.songguoxiong.wenshu.util;
+package com.songguoxiong.wenshu.utils;
 
 public class PageID {
     private final String value;
@@ -17,6 +17,8 @@ public class PageID {
 
     @Override
     public String toString() {
-        return getValue();
+        return "PageID{" +
+                "value='" + value + '\'' +
+                '}';
     }
 }

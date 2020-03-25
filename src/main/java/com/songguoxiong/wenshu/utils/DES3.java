@@ -1,4 +1,4 @@
-package com.songguoxiong.wenshu.util;
+package com.songguoxiong.wenshu.utils;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;

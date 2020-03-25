@@ -1,4 +1,4 @@
-package com.songguoxiong.wenshu.util;
+package com.songguoxiong.wenshu.utils;
 
 public class RequestVerificationToken {
     private final String value;
@@ -20,6 +20,8 @@ public class RequestVerificationToken {
 
     @Override
     public String toString() {
-        return getValue();
+        return "RequestVerificationToken{" +
+                "value='" + value + '\'' +
+                '}';
     }
 }

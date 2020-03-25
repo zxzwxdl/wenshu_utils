@@ -1,11 +1,19 @@
-package com.songguoxiong.wenshu.util;
+package com.songguoxiong.wenshu.utils;
 
 public class Response {
+    private boolean success;
     private int code;
     private String description;
     private String secretKey;
     private String result;
-    private boolean success;
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
 
     public int getCode() {
         return code;
@@ -39,11 +47,14 @@ public class Response {
         this.result = result;
     }
 
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
+    @Override
+    public String toString() {
+        return "Response{" +
+                "success=" + success +
+                ", code=" + code +
+                ", description='" + description + '\'' +
+                ", secretKey='" + secretKey + '\'' +
+                ", result='" + result + '\'' +
+                '}';
     }
 }
